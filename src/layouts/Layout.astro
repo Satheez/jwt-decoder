@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="JWT Explorer - Decode and explore JSON Web Tokens" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script is:inline>
+      // Initialize theme immediately to prevent flash
+      (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <slot />
+    <script is:inline>
+      // Initialize toggle functionality when DOM is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        const toggle = document.getElementById('theme-toggle');
+        
+        if (toggle) {
+          toggle.addEventListener('click', function() {
+            const html = document.documentElement;
+            const isDarkBefore = html.classList.contains('dark');
+            
+            if (isDarkBefore) {
+              html.classList.remove('dark');
+              localStorage.setItem('theme', 'light');
+              console.log('Switched to light mode');
+            } else {
+              html.classList.add('dark');
+              localStorage.setItem('theme', 'dark');
+              console.log('Switched to dark mode');
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

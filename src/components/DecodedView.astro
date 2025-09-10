@@ -1,0 +1,177 @@
+---
+---
+
+<div id="decoded-section" class="w-full max-w-4xl mx-auto hidden">
+  <div id="error-banner" class="hidden mb-6 p-4 bg-red-100 dark:bg-red-900/20 border border-red-300 dark:border-red-700 rounded-lg">
+    <div class="flex items-center">
+      <span class="text-red-600 dark:text-red-400 mr-2">⚠️</span>
+      <span id="error-message" class="text-red-800 dark:text-red-200 font-medium"></span>
+    </div>
+  </div>
+
+  <!-- Payload Section (Full Width) -->
+  <div class="mb-6 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+    <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+      <h3 class="text-lg font-semibold text-green-600 dark:text-green-400">Payload</h3>
+      <button 
+        id="copy-payload" 
+        class="px-3 py-1 text-sm bg-green-500 hover:bg-green-600 text-white rounded transition-colors duration-200 cursor-pointer"
+      >
+        Copy
+      </button>
+    </div>
+    <div class="p-4">
+      <pre id="payload-content" class="text-sm font-mono bg-white dark:bg-gray-900 p-3 rounded border overflow-auto max-h-96"></pre>
+      <div id="payload-metadata" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+        <h4 class="font-semibold mb-2 text-gray-700 dark:text-gray-300">Timestamps</h4>
+        <div id="timestamps" class="text-sm space-y-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Header Section -->
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold text-blue-600 dark:text-blue-400">Header</h3>
+        <button 
+          id="copy-header" 
+          class="px-3 py-1 text-sm bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors duration-200 cursor-pointer"
+        >
+          Copy
+        </button>
+      </div>
+      <div class="p-4">
+        <pre id="header-content" class="text-sm font-mono bg-white dark:bg-gray-900 p-3 rounded border overflow-auto max-h-64"></pre>
+      </div>
+    </div>
+
+    <!-- Signature Section -->
+    <div class="bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+      <div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+        <h3 class="text-lg font-semibold text-purple-600 dark:text-purple-400">Signature</h3>
+        <button 
+          id="copy-signature" 
+          class="px-3 py-1 text-sm bg-purple-500 hover:bg-purple-600 text-white rounded transition-colors duration-200 cursor-pointer"
+        >
+          Copy
+        </button>
+      </div>
+      <div class="p-4">
+        <pre id="signature-content" class="text-sm font-mono bg-white dark:bg-gray-900 p-3 rounded border overflow-auto max-h-64 break-all"></pre>
+        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+          <div id="signature-info" class="text-sm text-gray-600 dark:text-gray-400"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { decodeJwt, formatTimestamp, copyToClipboard } from '../utils/jwt';
+
+  const decodedSection = document.getElementById('decoded-section');
+  const errorBanner = document.getElementById('error-banner');
+  const errorMessage = document.getElementById('error-message');
+  
+  const headerContent = document.getElementById('header-content');
+  const payloadContent = document.getElementById('payload-content');
+  const signatureContent = document.getElementById('signature-content');
+  const timestamps = document.getElementById('timestamps');
+  const signatureInfo = document.getElementById('signature-info');
+
+  const copyHeaderBtn = document.getElementById('copy-header');
+  const copyPayloadBtn = document.getElementById('copy-payload');
+  const copySignatureBtn = document.getElementById('copy-signature');
+
+  function updateView(token: string) {
+    if (!token.trim()) {
+      decodedSection?.classList.add('hidden');
+      return;
+    }
+
+    const decoded = decodeJwt(token);
+    
+    if (!decoded.isValid) {
+      // Show error
+      decodedSection?.classList.remove('hidden');
+      errorBanner?.classList.remove('hidden');
+      errorMessage!.textContent = decoded.error || 'Invalid JWT token';
+      
+      // Clear content
+      headerContent!.textContent = '';
+      payloadContent!.textContent = '';
+      signatureContent!.textContent = '';
+      timestamps!.innerHTML = '';
+      signatureInfo!.textContent = '';
+      
+      return;
+    }
+
+    // Hide error and show decoded content
+    errorBanner?.classList.add('hidden');
+    decodedSection?.classList.remove('hidden');
+
+    // Display header
+    headerContent!.textContent = JSON.stringify(decoded.header, null, 2);
+
+    // Display payload
+    payloadContent!.textContent = JSON.stringify(decoded.payload, null, 2);
+
+    // Display signature
+    signatureContent!.textContent = decoded.signature;
+
+    // Display timestamps
+    let timestampHtml = '';
+    if (decoded.payload.iat) {
+      timestampHtml += `<div><strong>Issued At:</strong> ${formatTimestamp(decoded.payload.iat)}</div>`;
+    }
+    if (decoded.payload.exp) {
+      const isExpired = decoded.isExpired;
+      timestampHtml += `<div><strong>Expires:</strong> ${formatTimestamp(decoded.payload.exp)} ${isExpired ? '<span class="text-red-600 dark:text-red-400">(Expired)</span>' : '<span class="text-green-600 dark:text-green-400">(Valid)</span>'}</div>`;
+    }
+    if (decoded.payload.nbf) {
+      timestampHtml += `<div><strong>Not Before:</strong> ${formatTimestamp(decoded.payload.nbf)}</div>`;
+    }
+    timestamps!.innerHTML = timestampHtml;
+
+    // Display signature info
+    signatureInfo!.textContent = `Algorithm: ${decoded.header.alg || 'Unknown'}`;
+  }
+
+  // Listen for JWT changes
+  window.addEventListener('jwt-change', (event: any) => {
+    updateView(event.detail.token);
+  });
+
+  // Copy buttons
+  copyHeaderBtn?.addEventListener('click', async () => {
+    try {
+      await copyToClipboard(headerContent!.textContent || '');
+      copyHeaderBtn.textContent = 'Copied!';
+      setTimeout(() => copyHeaderBtn.textContent = 'Copy', 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  });
+
+  copyPayloadBtn?.addEventListener('click', async () => {
+    try {
+      await copyToClipboard(payloadContent!.textContent || '');
+      copyPayloadBtn.textContent = 'Copied!';
+      setTimeout(() => copyPayloadBtn.textContent = 'Copy', 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  });
+
+  copySignatureBtn?.addEventListener('click', async () => {
+    try {
+      await copyToClipboard(signatureContent!.textContent || '');
+      copySignatureBtn.textContent = 'Copied!';
+      setTimeout(() => copySignatureBtn.textContent = 'Copy', 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  });
+</script>

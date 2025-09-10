@@ -1,43 +1,109 @@
-# Astro Starter Kit: Minimal
+# JWT Explorer 🔐
 
-```sh
-npm create astro@latest -- --template minimal
+A powerful, client-side JWT (JSON Web Token) decoder and explorer built with modern web technologies. Instantly decode and analyze JWT tokens with real-time validation, beautiful syntax highlighting, and comprehensive metadata display.
+
+## ✨ Features
+
+- **🔍 Real-time JWT Decoding** - Instant token analysis as you type
+- **🎨 Syntax Highlighting** - Beautiful JSON formatting for header and payload
+- **🌙 Dark/Light Theme** - Toggle between themes with persistent preference
+- **📋 Copy to Clipboard** - One-click copying for header, payload, and signature
+- **📱 Mobile Responsive** - Works perfectly on all device sizes  
+- **🔒 100% Client-Side** - No data transmitted to servers, completely secure
+- **⚡ Zero Dependencies** - Lightweight and fast performance
+- **🧪 Sample Tokens** - Built-in test tokens for quick exploration
+- **⏰ Timestamp Conversion** - Human-readable date formatting
+- **✅ Token Validation** - Expiration checking and error handling
+
+## 🚀 Tech Stack
+
+- **Framework**: Astro + TypeScript
+- **Styling**: Tailwind CSS
+- **JWT Library**: jwt-decode
+- **Deployment Ready**: Cloudflare Pages / Vercel / Netlify
+
+## 📁 Project Structure
+
 ```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
 /
-├── public/
+├── docs/              # Project documentation
 ├── src/
-│   └── pages/
-│       └── index.astro
+│   ├── components/    # Reusable UI components
+│   │   ├── ThemeToggle.astro
+│   │   ├── JwtInput.astro
+│   │   └── DecodedView.astro
+│   ├── layouts/       # Page layouts
+│   │   └── Layout.astro
+│   ├── pages/         # Routes
+│   │   └── index.astro
+│   ├── styles/        # Global styles
+│   │   └── global.css
+│   └── utils/         # Utility functions
+│       └── jwt.ts
 └── package.json
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 🛠️ Development
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+### Prerequisites
+- Node.js 18+ 
+- npm
 
-Any static assets, like images, can be placed in the `public/` directory.
+### Getting Started
 
-## 🧞 Commands
+1. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-All commands are run from the root of the project, from a terminal:
+2. **Start development server**
+   ```bash
+   npm run dev
+   ```
+   
+3. **Open in browser**
+   Navigate to `http://localhost:4321`
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+### Available Commands
 
-## 👀 Want to learn more?
+| Command | Action |
+|---------|--------|
+| `npm install` | Install dependencies |
+| `npm run dev` | Start dev server at `localhost:4321` |
+| `npm run build` | Build production site to `./dist/` |
+| `npm run preview` | Preview build locally |
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## 🎯 Usage
+
+1. **Paste JWT Token** - Copy your JWT token into the textarea
+2. **View Decoded Data** - Instantly see header, payload, and signature
+3. **Check Timestamps** - View human-readable expiration times  
+4. **Copy Sections** - Use copy buttons to grab specific parts
+5. **Try Samples** - Use built-in sample tokens to test features
+6. **Toggle Theme** - Switch between light and dark modes
+
+## 🔧 Configuration
+
+The app includes sensible defaults but can be customized:
+
+- **Tailwind Config**: `tailwind.config.mjs`
+- **Astro Config**: `astro.config.mjs`
+- **TypeScript**: `tsconfig.json`
+
+## 🚀 Deployment
+
+Build the production version:
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist/` directory, ready for deployment to any static hosting provider.
+
+## 📝 License
+
+MIT License - feel free to use this project for any purpose.
+
+## 🤝 Contributing
+
+Contributions welcome! Please read the docs folder for requirements and design guidelines.

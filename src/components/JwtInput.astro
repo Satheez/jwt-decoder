@@ -1,0 +1,80 @@
+---
+---
+
+<div class="w-full max-w-4xl mx-auto mb-8">
+  <label for="jwt-input" class="block text-lg font-semibold mb-4">
+    Paste your JWT below:
+  </label>
+  <textarea
+    id="jwt-input"
+    class="w-full h-32 p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+    placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  ></textarea>
+  <div class="flex justify-between items-center mt-4">
+    <button
+      id="clear-btn"
+      class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors duration-200 cursor-pointer"
+    >
+      Clear
+    </button>
+    <div class="flex gap-2">
+      <button
+        id="sample1-btn"
+        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 cursor-pointer"
+      >
+        Sample Token 1
+      </button>
+      <button
+        id="sample2-btn"
+        class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 cursor-pointer"
+      >
+        Sample Token 2
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const input = document.getElementById('jwt-input') as HTMLTextAreaElement;
+  const clearBtn = document.getElementById('clear-btn');
+  const sample1Btn = document.getElementById('sample1-btn');
+  const sample2Btn = document.getElementById('sample2-btn');
+
+  // Sample tokens for testing
+  const sampleTokens = {
+    token1: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
+    token2: 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMTIzIiwibmFtZSI6IkphbmUgU21pdGgiLCJpYXQiOjE2MTYyMzkwMjIsImV4cCI6MTYxNjI0MjYyMiwiYXVkIjoiZXhhbXBsZS1hcHAiLCJpc3MiOiJleGFtcGxlLWlzc3VlciJ9.invalid-signature-for-demo'
+  };
+
+  function dispatchJwtChange() {
+    const event = new CustomEvent('jwt-change', {
+      detail: { token: input.value }
+    });
+    window.dispatchEvent(event);
+  }
+
+  // Auto-decode when user types
+  input?.addEventListener('input', () => {
+    dispatchJwtChange();
+  });
+
+  // Clear button
+  clearBtn?.addEventListener('click', () => {
+    input.value = '';
+    dispatchJwtChange();
+  });
+
+  // Sample token buttons
+  sample1Btn?.addEventListener('click', () => {
+    input.value = sampleTokens.token1;
+    dispatchJwtChange();
+  });
+
+  sample2Btn?.addEventListener('click', () => {
+    input.value = sampleTokens.token2;
+    dispatchJwtChange();
+  });
+
+  // Focus input on page load
+  input?.focus();
+</script>
